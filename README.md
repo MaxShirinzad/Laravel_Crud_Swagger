@@ -1,2 +1,2 @@
 # Laravel_Crud_Swagger
-Laravel Crud Template with Swagger for Documentation
+Laravel 9 Crud Template with Swagger for Documentation
