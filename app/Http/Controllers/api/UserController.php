@@ -21,8 +21,6 @@ class UserController extends Controller
 
     public function __construct()
     {
-        //        $this->imagePath = public_path() . "/uploadimage/";
-        //$this->imagePath = $_SERVER['DOCUMENT_ROOT'] . "/users/images/";
         //$this->imagePath = $_SERVER['DOCUMENT_ROOT'] . "users/images/";
         $this->imagePath = "users/images/";
     }
