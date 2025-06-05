@@ -11,6 +11,134 @@
         }
     ],
     "paths": {
+        "/signup": {
+            "post": {
+                "tags": [
+                    "Register & Login"
+                ],
+                "description": "Signup",
+                "operationId": "d7b2a826b1e37bfd2c6a969a27e9a649",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SignupRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User Create"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Register & Login"
+                ],
+                "summary": "User Login",
+                "description": "Login User Here",
+                "operationId": "authLogin",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "email",
+                                        "example": "user@site.com"
+                                    },
+                                    "password": {
+                                        "type": "password",
+                                        "example": "1234567890"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Login Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Login Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Register & Login"
+                ],
+                "summary": "Logout",
+                "description": "Logout user and invalidate token",
+                "operationId": "authLogout",
+                "responses": {
+                    "204": {
+                        "description": "Success"
+                    },
+                    "401": {
+                        "description": "Returns when user is not authenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Not authorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/users": {
             "get": {
                 "tags": [
@@ -167,6 +295,28 @@
     },
     "components": {
         "schemas": {
+            "SignupRequest": {
+                "title": "Signup User request",
+                "description": "Signup User request body data",
+                "properties": {
+                    "name": {
+                        "title": "name",
+                        "type": "string",
+                        "example": "Test"
+                    },
+                    "email": {
+                        "title": "email",
+                        "type": "string",
+                        "example": "test@test.com"
+                    },
+                    "password": {
+                        "title": "password",
+                        "type": "string",
+                        "example": "123123"
+                    }
+                },
+                "type": "object"
+            },
             "StoreUserRequest": {
                 "title": "Store User request",
                 "description": "Store User request body data",
@@ -225,6 +375,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Register & Login",
+            "description": "Register & Login"
+        },
         {
             "name": "Users",
             "description": "Users"
