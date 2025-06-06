@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\SignupRequest;
+use App\Http\Requests\Users\LoginRequest;
+use App\Http\Requests\Users\SignupRequest;
 use App\Models\User;
 use App\Notifications\WelcomeEmailNotification;
 use Illuminate\Http\Request;

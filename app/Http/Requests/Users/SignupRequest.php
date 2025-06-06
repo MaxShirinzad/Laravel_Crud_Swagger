@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
 /**
  * @OA\Schema(
- *      title="Update User request",
- *      description="Update User request body data",
+ *      title="Signup User request",
+ *      description="Signup User request body data",
  * )
  */
-class UpdateUserRequest extends FormRequest
+class SignupRequest extends FormRequest
 {
     /**
      * @OA\Property(
@@ -23,33 +23,15 @@ class UpdateUserRequest extends FormRequest
      */
     public $name;
 
-//    /**
-//     * @OA\Property(
-//     *   title="last_name"
-//     * )
-//     *
-//     * @var string
-//     */
-//    public $last_name;
-
     /**
      * @OA\Property(
      *   title="email",
-     *   example="test23@test.com",
+     *   example="test@test.com",
      * )
      *
      * @var string
      */
     public $email;
-
-//    /**
-//     * @OA\Property(
-//     *   title="role_id"
-//     * )
-//     *
-//     * @var int
-//     */
-//    public $role_id;
 
     /**
      * @OA\Property(
@@ -67,7 +49,7 @@ class UpdateUserRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
@@ -77,23 +59,19 @@ class UpdateUserRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            'name' => 'string|max:55',
-            //'email' => 'email|unique:users,email,' .$this->id,
-            'email' => 'email|unique:users,email,' .$this->id,
-//            'email' => 'required|email|unique:users,email,',
+            'name' => ['required', 'string'],
+            'email' => ['required', 'email', 'unique:users,email'],
             'password' => [
+                'required',
 //                'confirmed',
                 Password::min(4)
 //                    ->letters()
-//                    ->symbols(),
-            ],
-
-            'type_id' => '',
-            'user_category_id' => '',
-            'image' => 'nullable',
+//                    ->symbols()
+//                    ->numbers()
+            ]
         ];
     }
 }

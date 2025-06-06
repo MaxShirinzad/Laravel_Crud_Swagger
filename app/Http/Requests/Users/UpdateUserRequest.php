@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
 /**
  * @OA\Schema(
- *      title="Store User request",
- *      description="Store User request body data",
+ *      title="Update User request",
+ *      description="Update User request body data",
  * )
  */
-class StoreUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * @OA\Property(
@@ -35,7 +35,7 @@ class StoreUserRequest extends FormRequest
     /**
      * @OA\Property(
      *   title="email",
-     *   example="test@test.com",
+     *   example="test23@test.com",
      * )
      *
      * @var string
@@ -61,26 +61,6 @@ class StoreUserRequest extends FormRequest
      */
     public $password;
 
-    /**
-     * @OA\Property(
-     *   title="image",
-     *   example="/test/tt.jpeg"
-     * )
-     *
-     * @var string
-     */
-    public $image;
-
-//    /**
-//     * @OA\Property(
-//     *   title="type_id",
-//     *   example="3"
-//     * )
-//     *
-//     * @var string
-//     */
-//    public $type_id;
-
 
     /**
      * Determine if the user is authorized to make this request.
@@ -100,20 +80,19 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:55',
-            'email' => 'email|unique:users,email',
+            'name' => 'string|max:55',
+            //'email' => 'email|unique:users,email,' .$this->id,
+            'email' => 'email|unique:users,email,' .$this->id,
+//            'email' => 'required|email|unique:users,email,',
             'password' => [
-                '',
+//                'confirmed',
                 Password::min(4)
 //                    ->letters()
 //                    ->symbols(),
             ],
 
-//            'type_id' => 'required|integer|between:1,4',
-//            'type_id' => '' ?? 3,
-//            'type_id' => 'nullable',
+            'type_id' => '',
             'user_category_id' => '',
-            //'image' => 'required|string|max:100',
             'image' => 'nullable',
         ];
     }
