@@ -6,7 +6,9 @@ use App\Traits\ApiResponses;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -75,7 +77,8 @@ class Handler extends ExceptionHandler
         });
     }
 
-    public function render($request, Throwable $exception) {
+    public function render($request, Throwable $exception): JsonResponse|Response
+    {
         $className = get_class($exception);
 
         if (array_key_exists($className, $this->handlers)) {
@@ -94,4 +97,8 @@ class Handler extends ExceptionHandler
             ]
         ]);
     }
+
+
+
+    
 }
