@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\ProductFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,7 +11,7 @@ use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
-use Illuminate\Database\Eloquent\Builder;
+
 
 /**
  * App\Models\Product
@@ -51,11 +52,8 @@ class Product extends Model
 {
     use HasFactory;
     use Sluggable;
-//    use InteractsWithMedia;
 
     protected $guarded = ['id'];
-
-//    public $timestamps =false;
 
     /**
      * Return the sluggable configuration array for this model.

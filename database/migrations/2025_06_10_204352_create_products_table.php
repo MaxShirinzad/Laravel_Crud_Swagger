@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->smallInteger('group_id')->unsigned()->nullable();
 
             $table->string('Title', 55);
             $table->string('Desc' , '4000')->nullable();

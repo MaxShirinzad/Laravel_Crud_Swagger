@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\ProductController;
+use App\Http\Controllers\api\ProductImageController;
 use App\Http\Controllers\api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::match(['PUT', 'PATCH'],'/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::DELETE('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     //------------------------------
+    //    ProductImages
+    Route::POST('/productImages', [ProductImageController::class, 'store'])->name('productImages.store');
+    Route::match(['PUT', 'PATCH'],'/productImages/{productImage}', [ProductImageController::class, 'update'])->name('productImages.update');
+    Route::DELETE('/productImages/{productImage}', [ProductImageController::class, 'destroy'])->name('productImages.destroy');
+    //------------------------------
+    //------------------------------
 });
 
 //------------------------------
@@ -26,6 +33,9 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 //------------------------------
 Route::GET('/products', [ProductController::class, 'index'])->name('products.index');
 Route::GET('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+
+Route::GET('/productImages', [ProductImageController::class, 'index'])->name('productImages.index');
+Route::GET('/productImages/{productImage}', [ProductImageController::class, 'show'])->name('productImages.show');
 //------------------------------
 
 
