@@ -3,67 +3,42 @@
 namespace App\Traits;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\MessageBag;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
-use Throwable;
 
-trait ApiResponses
-{
-    /**
-     * Standard API error response
-     */
-    protected function apiErrorResponse(
-        string $message,
-        int $statusCode,
-        mixed $errors = null
-    ): JsonResponse {
-        $response = [
-            'success' => false,
-            'message' => $message,
-            'errors' => $errors,
-            'status' => $statusCode,
-            'timestamp' => now()->toDateTimeString(),
-        ];
-
-        return response()->json($response, $statusCode);
-    }
-
-    /**
-     * Convert validation exception to response
-     */
-    protected function invalidJson($request, ValidationException $exception): JsonResponse
+trait ApiResponses {
+    protected function ok($message, $data = []): JsonResponse
     {
-        return $this->apiErrorResponse(
-            'Validation failed',
-            $exception->status,
-            $exception->errors()
-        );
+        return $this->success($message, $data, 200);
     }
 
-    /**
-     * Handle 500 Internal Server Errors
-     */
-    protected function internalServerErrorResponse(
-        Throwable $exception,
-        bool $includeDebugInfo = false
-    ): JsonResponse {
-        $response = [
-            'success' => false,
-            'message' => 'Internal Server Error',
-            'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
-            'timestamp' => now()->toDateTimeString(),
-        ];
+    protected function success($message, $data = [], $statusCode = 200): JsonResponse
+    {
+        return response()->json([
+            'data' => $data,
+            'message' => $message,
+            'status' => $statusCode
+        ], $statusCode);
+    }
 
-        if ($includeDebugInfo) {
-            $response['error'] = $exception->getMessage();
-            $response['file'] = $exception->getFile();
-            $response['line'] = $exception->getLine();
-            $response['trace'] = config('app.debug') ? $exception->getTrace() : 'Hidden in production';
+    protected function error($errors = [], $statusCode = null): JsonResponse
+    {
+        if (is_string($errors)) {
+            return response()->json([
+                'message' => $errors,
+                'status' => $statusCode
+            ], $statusCode);
         }
 
-        return response()->json($response, ResponseAlias::HTTP_INTERNAL_SERVER_ERROR);
+        return response()->json([
+            'errors' => $errors
+        ]);
     }
 
+    protected function notAuthorized($message): JsonResponse
+    {
+        return $this->error([
+            'status' => 401,
+            'message' => $message,
+            'source' => ''
+        ]);
+    }
 }

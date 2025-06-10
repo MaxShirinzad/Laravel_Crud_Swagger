@@ -3,138 +3,95 @@
 namespace App\Exceptions;
 
 use App\Traits\ApiResponses;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-use Symfony\Component\CssSelector\Exception\InternalErrorException;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
-use Throwable;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
     use ApiResponses;
+    /**
+     * The list of the inputs that are never flashed to the session on validation exceptions.
+     *
+     * @var array<int, string>
+     */
+    protected $dontFlash = [
+        'current_password',
+        'password',
+        'password_confirmation',
+    ];
+
+    protected array $handlers = [
+        ValidationException::class => 'handleValidation',
+        ModelNotFoundException::class => 'handleModelNotFound',
+        AuthenticationException::class => 'handleAuthentication',
+    ];
+
+    private function handleValidation(ValidationException $exception)
+    {
+        foreach ($exception->errors() as $key => $value)
+            foreach ($value as $message) {
+                $errors[] = [
+                    'status' => 422,
+                    'message' => $message,
+                    'source' => $key
+                ];
+            }
+
+        return $errors;
+    }
+
+    private function handleModelNotFound(ModelNotFoundException $exception): array
+    {
+        return [
+            [
+                'status' => 404,
+                'message' => 'The resource cannot be found.',
+                'source' => $exception->getModel()
+            ]
+        ];
+    }
+
+    private function handleAuthentication(AuthenticationException $exception): array
+    {
+        return [
+            [
+                'status' => 401,
+                'message' => 'Unauthenticated',
+                'source' => ''
+            ]
+        ];
+    }
 
     /**
-     * Report or log an exception.
-     * @throws Throwable
+     * Register the exception handling callbacks for the application.
      */
-    public function report(Throwable $e): void
+    public function register(): void
     {
-        parent::report($e);
+        $this->reportable(function (Throwable $e) {
+            //
+        });
     }
 
-    /**
-     * Render an exception into an HTTP response.
-     * @throws Throwable
-     */
-    public function render($request, Throwable $e): JsonResponse|ResponseAlias
-    {
-        // Handle API exceptions
-        if ($request->expectsJson()) {
-            return $this->handleApiException($request, $e);
+    public function render($request, Throwable $exception) {
+        $className = get_class($exception);
+
+        if (array_key_exists($className, $this->handlers)) {
+            $method = $this->handlers[$className];
+            return $this->error($this->$method($exception));
         }
 
-        // Special handling for 500 errors in web requests
-        if ($this->isHttpException($e) &&
-            $e->getStatusCode() === 500) {
-            return $this->handleWebServerError($e, $request);
-        }
+        $index = strrpos($className, '\\');
 
-        return parent::render($request, $e);
+        return $this->error([
+            [
+                'type' => substr($className, $index + 1),
+                'status' => 0,
+                'message' => $exception->getMessage(),
+                'source' => 'Line: ' . $exception->getLine() . ': ' . $exception->getFile()
+            ]
+        ]);
     }
-
-    /**
-     * Handle API exceptions
-     */
-    protected function handleApiException($request, Throwable $exception)
-    {
-        if ($exception instanceof ValidationException) {
-            return $this->invalidJson($request, $exception);
-        }
-
-        if ($exception instanceof ModelNotFoundException) {
-            $model = strtolower(class_basename($exception->getModel()));
-            return $this->apiErrorResponse(
-                "No {$model} found with the given ID",
-                ResponseAlias::HTTP_NOT_FOUND
-            );
-        }
-
-        if ($exception instanceof AuthenticationException) {
-            return $this->apiErrorResponse(
-                $exception->getMessage(),
-                ResponseAlias::HTTP_UNAUTHORIZED
-            );
-        }
-
-        if ($exception instanceof AuthorizationException) {
-            return $this->apiErrorResponse(
-                $exception->getMessage(),
-                ResponseAlias::HTTP_FORBIDDEN
-            );
-        }
-
-        if ($exception instanceof MethodNotAllowedHttpException) {
-            return $this->apiErrorResponse(
-                'The specified method for this request is invalid',
-                ResponseAlias::HTTP_METHOD_NOT_ALLOWED
-            );
-        }
-
-        if ($exception instanceof NotFoundHttpException) {
-            return $this->apiErrorResponse(
-                'The specified URL cannot be found',
-                ResponseAlias::HTTP_NOT_FOUND
-            );
-        }
-
-        if ($exception instanceof HttpException) {
-            return $this->apiErrorResponse(
-                $exception->getMessage(),
-                $exception->getStatusCode()
-            );
-        }
-
-        if ($exception instanceof InternalErrorException) {
-            // Catch-all for unhandled exceptions (500 errors)
-            return $this->internalServerErrorResponse(
-                $exception,
-                config('app.debug')
-            );
-        }
-
-        // Default unexpected error
-        return $this->apiErrorResponse(
-            config('app.debug')
-                ? $exception->getMessage()
-                : 'Unexpected server error',
-            ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
-            config('app.debug') ? [
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'trace' => $exception->getTrace()
-            ] : null
-        );
-    }
-
-    protected function handleWebServerError(Throwable $exception, $request)
-    {
-        if (config('app.debug')) {
-            return parent::render($request, $exception);
-        }
-
-        // Custom error page for production
-        return response()->view('errors.500', [
-            'exception' => $exception
-        ], 500);
-    }
-
-
 }
