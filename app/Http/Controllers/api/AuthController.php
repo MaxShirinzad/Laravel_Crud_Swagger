@@ -19,37 +19,83 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *   path="/signup",
-     *   tags={"Register & Login"},
-     *   description="Signup",
-     *   @OA\Response(response="200",
-     *     description="User Create",
-     *   ),
-     *   @OA\RequestBody(
-     *     required=true,
-     *     @OA\JsonContent(ref="#/components/schemas/SignupRequest")
-     *   )
+     *     path="/signup",
+     *     operationId="authSignup",
+     *     tags={"Register & Login"},
+     *     summary="Register new user",
+     *     description="Creates a new user account and returns an API token",
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name","email","password","password_confirmation"},
+     *             @OA\Property(property="name", type="string", example="John Doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+     *             @OA\Property(
+     *                 property="password",
+     *                 type="string",
+     *                 format="password",
+     *                 example="aa123123",
+     *                 minLength=6
+     *             ),
+     *             @OA\Property(
+     *                 property="password_confirmation",
+     *                 type="string",
+     *                 format="password",
+     *                 example="aa123123"
+     *             ),
+     *         ),
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=201,
+     *         description="User created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="user", ref="#/components/schemas/User"),
+     *             @OA\Property(property="access_token", type="string", example="1|XyZ123..."),
+     *             @OA\Property(property="token_type", type="string", example="Bearer"),
+     *             @OA\Property(property="expires_in", type="integer", example=525600),
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation errors",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="The email has already been taken.")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *
+     *     security={}
      * )
      */
-    public function signup(SignupRequest $request)
+    public function signup(SignupRequest $request): JsonResponse
     {
-        try {
-            $data = $request->validated();
-            $user = User::query()->create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => bcrypt($data['password']),
-            ]);
+        $data = $request->validated();
+        $user = User::query()->create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
+        ]);
 
-            $token = $user->createToken('main')->plainTextToken;
+        $expireDays = 7;
+        $token = $user->createToken('auth_token', ['*'], now()->addDays($expireDays))->plainTextToken;
 
-            // Send verification email for new user
-            $user->notify(new WelcomeEmailNotification($user, $token));
-
-            return response(compact('user', 'token'));
-        } catch (\Exception $exception) {
-            return response($exception->getMessage(), 409);
-        }
+        return response()->json([
+            'user' => $user->only(['id', 'name', 'email']),
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'expires_in' => 'In ' . $expireDays . ' days',
+        ], Response::HTTP_CREATED);
     }
 
     /**
@@ -157,12 +203,14 @@ class AuthController extends Controller
         $user->tokens()->delete();
 
         // Create new token with abilities
-        $token = $user->createToken('auth_token', ['*'])->plainTextToken;
+        $expireDays = 7;
+        $token = $user->createToken('auth_token', ['*'], now()->addDays($expireDays))->plainTextToken;
 
         return response()->json([
             'user' => $user->only(['id', 'name', 'email']),
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'expires_in' => 'In ' . $expireDays . ' days',
         ]);
     }
 
