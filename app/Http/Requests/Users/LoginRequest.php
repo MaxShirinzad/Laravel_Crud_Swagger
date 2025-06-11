@@ -8,34 +8,22 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class LoginRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
             'email' => 'required|email|string|exists:users,email',
-            'password' => [
-                'required',
-            ],
+            'password' => 'required|string|min:6',
             'remember' => 'boolean'
         ];
     }
 
-	public function messages()
-	{
+	public function messages(): array
+    {
     return [
         'email.required' => 'A email is required',
         'password.required'  => 'A password is required',
@@ -46,16 +34,11 @@ class LoginRequest extends FormRequest
  protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors();
-
-//        if ($errors->hasAny()) {
-            $customErrorMessage = "Provided email or password is incorrect.";
-            throw new HttpResponseException(response()->json([
-                'message' => $customErrorMessage,
-                'errors' => $errors,
-            ], 422));
-//        }
-
-//        parent::failedValidation($validator);
+        $customErrorMessage = "Provided email or password is incorrect.";
+        throw new HttpResponseException(response()->json([
+            'message' => $customErrorMessage,
+            'errors' => $errors,
+        ], 422));
     }
 
 

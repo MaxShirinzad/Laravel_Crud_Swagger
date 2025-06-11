@@ -28,8 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 //------------------------------
 // Users Auth
-Route::post('/signup', [AuthController::class, 'signup'])->name('signup');
-Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/signup', [AuthController::class, 'signup'])->name('signup')->middleware('throttle:3,1'); // 3 attempts per minute
+Route::post('/login', [AuthController::class, 'login'])->name('login')->middleware('throttle:5,1'); // 5 attempts per minute
 //------------------------------
 Route::GET('/products', [ProductController::class, 'index'])->name('products.index');
 Route::GET('/products/{product}', [ProductController::class, 'show'])->name('products.show');
