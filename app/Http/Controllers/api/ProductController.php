@@ -78,7 +78,7 @@ class ProductController extends Controller
      *     description="Product slug",
      *     in="path",
      *     required=true,
-     *     example="mozsh-ton",
+     *     example="product-title",
      *     @OA\Schema(
      *        type="string"
      *     )

@@ -207,7 +207,7 @@
                         "schema": {
                             "type": "string"
                         },
-                        "example": "mozsh-ton"
+                        "example": "product-title"
                     }
                 ],
                 "responses": {
