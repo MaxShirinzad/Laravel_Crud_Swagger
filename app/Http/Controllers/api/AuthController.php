@@ -216,30 +216,37 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     * path="/logout",
-     * summary="Logout",
-     * description="Logout user and invalidate token",
-     * operationId="authLogout",
-     * tags={"Register & Login"},
-     *   security={{"bearerAuth":{}}},
-     * @OA\Response(
-     *    response=204,
-     *    description="Success"
+     *     path="/logout",
+     *     operationId="authLogout",
+     *     tags={"Register & Login"},
+     *     summary="Logout user",
+     *     description="Revokes the current access token",
+     *     security={{"sanctum": {}}},
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully logged out",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Successfully logged out")
+     *         )
      *     ),
-     * @OA\Response(
-     *    response=401,
-     *    description="Returns when user is not authenticated",
-     *    @OA\JsonContent(
-     *       @OA\Property(property="message", type="string", example="Not authorized"),
-     *    )
-     * )
+     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     )
      * )
      */
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         $user = $request->user();
         $user->currentAccessToken()->delete();
-        return response('', 204);
+        return response()->json([
+            'message' => 'Successfully logged out',
+        ], Response::HTTP_OK);
     }
 
 

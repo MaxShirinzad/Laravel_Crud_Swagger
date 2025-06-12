@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->group(function () {
     // users
     Route::apiResource('/users', UserController::class);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('throttle:3,1');;
     //------------------------------
     //    Products
     Route::POST('/products', [ProductController::class, 'store'])->name('products.store');

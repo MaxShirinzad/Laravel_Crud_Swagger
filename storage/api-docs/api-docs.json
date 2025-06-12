@@ -230,22 +230,35 @@
                 "tags": [
                     "Register & Login"
                 ],
-                "summary": "Logout",
-                "description": "Logout user and invalidate token",
+                "summary": "Logout user",
+                "description": "Revokes the current access token",
                 "operationId": "authLogout",
                 "responses": {
-                    "204": {
-                        "description": "Success"
-                    },
-                    "401": {
-                        "description": "Returns when user is not authenticated",
+                    "200": {
+                        "description": "Successfully logged out",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Not authorized"
+                                            "example": "Successfully logged out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
                                         }
                                     },
                                     "type": "object"
@@ -256,7 +269,7 @@
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "sanctum": []
                     }
                 ]
             }
