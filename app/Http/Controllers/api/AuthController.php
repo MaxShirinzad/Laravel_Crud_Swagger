@@ -221,7 +221,7 @@ class AuthController extends Controller
      *     tags={"Register & Login"},
      *     summary="Logout user",
      *     description="Revokes the current access token",
-     *     security={{"sanctum": {}}},
+     *     security={{"bearerAuth":{}}},
      *
      *     @OA\Response(
      *         response=200,
