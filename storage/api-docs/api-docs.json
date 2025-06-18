@@ -565,21 +565,24 @@
                 "tags": [
                     "Users"
                 ],
+                "summary": "List all users",
                 "operationId": "878951f411fc79177d2fbceab3ecade1",
-                "parameters": [
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Pagination page",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "example": "1"
-                    }
-                ],
                 "responses": {
                     "200": {
-                        "description": "User Collection"
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
                     }
                 },
                 "security": [
@@ -843,6 +846,38 @@
                 },
                 "type": "object"
             },
+            "UserResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": "3"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "user1"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "user1@example.com"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-03-11 20:40:54"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-03-11 20:40:54"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "/users/images/user1.jpg"
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "required": [
                     "id",
@@ -884,6 +919,10 @@
     },
     "tags": [
         {
+            "name": "Users",
+            "description": "API Endpoints for User Management"
+        },
+        {
             "name": "Register & Login",
             "description": "Register & Login"
         },
@@ -894,10 +933,6 @@
         {
             "name": "ProductImages",
             "description": "ProductImages"
-        },
-        {
-            "name": "Users",
-            "description": "Users"
         }
     ]
 }

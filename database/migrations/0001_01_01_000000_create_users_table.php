@@ -26,7 +26,6 @@ return new class extends Migration
 
             $table->string('password')->nullable();
 
-            $table->Integer('user_category_id')->nullable();
             $table->boolean('IsActivated')->default(0);
 
             $table->string('image', 100)->nullable();

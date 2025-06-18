@@ -13,7 +13,12 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
-
+/**
+ * @OA\Tag(
+ *     name="Users",
+ *     description="API Endpoints for User Management"
+ * )
+ */
 class UserController extends Controller
 {
     use ToolsTraits;
@@ -27,21 +32,19 @@ class UserController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/users",
-     *   security={{"bearerAuth":{}}},
-     *   tags={"Users"},
-     *   @OA\Response(response="200",
-     *   description="User Collection",
-     *   ),
-     *   @OA\Parameter(
-     *     name="page",
-     *     description="Pagination page",
-     *     example="1",
-     *     in="query",
-     *     @OA\Schema(
-     *        type="integer"
-     *     )
-     *   )
+     *     path="/users",
+     *     summary="List all users",
+     *     tags={"Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/UserResource")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated")
      * )
      */
     public function index(): AnonymousResourceCollection
