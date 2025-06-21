@@ -595,8 +595,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Create user",
-                "description": "Create user",
+                "summary": "Create a new user",
                 "operationId": "2ed46f45e8ca62296e0fa8be30612faf",
                 "requestBody": {
                     "required": true,
@@ -610,7 +609,17 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "User Create"
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 },
                 "security": [
@@ -798,28 +807,29 @@
                 "type": "object"
             },
             "StoreUserRequest": {
-                "title": "Store User request",
-                "description": "Store User request body data",
+                "required": [
+                    "name",
+                    "email",
+                    "password"
+                ],
                 "properties": {
                     "name": {
-                        "title": "name",
                         "type": "string",
-                        "example": "Test"
+                        "example": "user1"
                     },
                     "email": {
-                        "title": "email",
                         "type": "string",
-                        "example": "test@test.com"
+                        "format": "email",
+                        "example": "user1@example.com"
                     },
                     "password": {
-                        "title": "password",
                         "type": "string",
+                        "format": "password",
                         "example": "123123"
                     },
                     "image": {
-                        "title": "image",
                         "type": "string",
-                        "example": "/test/tt.jpeg"
+                        "example": "/users/images/user1.jpg"
                     }
                 },
                 "type": "object"
@@ -882,29 +892,36 @@
                 "required": [
                     "id",
                     "name",
-                    "email"
+                    "email",
+                    "password"
                 ],
                 "properties": {
                     "id": {
                         "type": "integer",
-                        "example": 1
+                        "example": "3"
                     },
                     "name": {
                         "type": "string",
-                        "example": "John Doe"
+                        "example": "user1"
                     },
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "example": "user@example.com"
+                        "example": "user1@example.com"
                     },
                     "created_at": {
                         "type": "string",
-                        "format": "date-time"
+                        "format": "date-time",
+                        "example": "2025-03-11 20:40:54"
                     },
                     "updated_at": {
                         "type": "string",
-                        "format": "date-time"
+                        "format": "date-time",
+                        "example": "2025-03-11 20:40:54"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "/users/images/user1.jpg"
                     }
                 },
                 "type": "object"

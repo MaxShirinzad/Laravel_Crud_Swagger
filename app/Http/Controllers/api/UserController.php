@@ -54,45 +54,36 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *   path="/users",
-     *   security={{"bearerAuth":{}}},
-     *   tags={"Users"},
-     *   summary="Create user",
-     *   description="Create user",
-     *   @OA\Response(response="201",
-     *     description="User Create",
-     *   ),
-     *   @OA\RequestBody(
-     *     required=true,
-     *     @OA\JsonContent(ref="#/components/schemas/StoreUserRequest")
-     *   )
+     *     path="/users",
+     *     summary="Create a new user",
+     *     tags={"Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/StoreUserRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="User created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *     ),
+     *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function store(StoreUserRequest $request): Application|Response|ResponseFactory
+    public function store(StoreUserRequest $request): UserResource
     {
-        try {
-            $data = $request->validated();
-            $data['password'] = bcrypt($data['password']);
-
-
-//            $userID = $user->id;
-//            $data['user_id'] = $userID;
-            //---------------------
-            // Check if image was given and save on local file system
-            if (isset($data['image'])) {
-                $imageName = $this->saveImage($data['image'], $this->imagePath);
-                $data['image'] = $imageName;
-            }
-            //----------------------------
-//            $post = new Post();
-//            $post->query()->create($data);
-
-            $user = User::query()->create($data);
-
-            return response(new UserResource($user), 201);
-        } catch (\Exception $exception) {
-            return response($exception->getMessage(), 409);
+        $validated = $request->validated();
+        $validated['password'] = bcrypt($validated['password']);
+        //---------------------
+        // Check if image was given and save on local file system
+        if (isset($validated['image'])) {
+            $imageName = $this->saveImage($validated['image'], $this->imagePath);
+            $validated['image'] = $imageName;
         }
+        //----------------------------
+        $user = User::query()->create($validated);
+
+        return new UserResource($user);
     }
 
     /**
