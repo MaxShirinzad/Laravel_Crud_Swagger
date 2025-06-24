@@ -31,6 +31,7 @@ class UserResource extends JsonResource
 
             'image' => $this->image,
             //'imagePublicLink' => $this->imagePublicLink() ?? null,
+            //'image_url' => $this->image ? asset("storage/{$this->image}") : null,
         ];
     }
 }

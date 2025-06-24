@@ -3,7 +3,9 @@
 namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rules\File;
 
 /**
  * @OA\Schema(
@@ -27,7 +29,12 @@ class StoreUserRequest extends FormRequest
         return [
             'name' => 'required|string|max:55',
             'email' => 'required|string|email|unique:users,email',
-            'image' => 'nullable|string|max:100',
+            'image' => [
+                'nullable',
+                File::image()
+                    ->max(5 * 1024) // 5MB
+                    ->dimensions(Rule::dimensions()->maxWidth(2000)->maxHeight(2000)),
+            ],
             'password' => [
                 'required',
                 'string',
