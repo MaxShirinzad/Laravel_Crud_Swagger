@@ -8,8 +8,11 @@ use App\Http\Requests\Users\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Traits\ToolsTraits;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
@@ -22,6 +25,7 @@ use Illuminate\Http\Response;
 class UserController extends Controller
 {
     use ToolsTraits;
+    use AuthorizesRequests;
     public string $imagePath = '';
 
     public function __construct()
@@ -163,28 +167,33 @@ class UserController extends Controller
     }
 
     /**
-     * @OA\Delete(path="/users/{id}",
-     *   security={{"bearerAuth":{}}},
-     *   tags={"Users"},
-     *   @OA\Response(response="204",
-     *     description="User Delete",
-     *   ),
-     *   @OA\Parameter(
-     *     name="id",
-     *     description="User ID",
-     *     in="path",
-     *     required=true,
-     *     @OA\Schema(
-     *        type="integer"
-     *     )
-     *   )
+     * @OA\Delete(
+     *     path="/users/{id}",
+     *     summary="Delete user",
+     *     tags={"Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="User deleted"
+     *     ),
+     *     @OA\Response(response=404, description="User not found"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=401, description="Unauthenticated")
      * )
+     * @throws AuthorizationException
      */
-    public function destroy(User $user): Application|Response|ResponseFactory
+    public function destroy(User $user): JsonResponse
     {
+        $this->authorize('delete', $user);
         $user->delete();
         $this->deletePhotoOldPhoto($user->image, $this->imagePath);
-        return response("", 204);
+        return response()->json(null, 204);
     }
 
 

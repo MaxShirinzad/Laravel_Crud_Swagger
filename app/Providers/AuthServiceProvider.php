@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Providers;
+
+use App\Models\User;
+use App\Policies\UserPolicy;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+
+class AuthServiceProvider extends ServiceProvider
+{
+    /**
+     * The model to policy mappings for the application.
+     *
+     * @var array<class-string, class-string>
+     */
+    protected $policies = [
+        User::class => UserPolicy::class,
+
+        // Register other policies here:
+        // Post::class => PostPolicy::class,
+    ];
+
+    /**
+     * Register any authentication / authorization services.
+     */
+    public function boot(): void
+    {
+        $this->registerPolicies();
+
+        // Optional: Define additional gates
+        Gate::define('admin-action', function (User $user) {
+            // Admin check
+            return $user->isAdmin();
+        });
+    }
+}

@@ -732,12 +732,12 @@
                 "tags": [
                     "Users"
                 ],
+                "summary": "Delete user",
                 "operationId": "1df254206ad12c6a1f7a99064837c6e3",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "User ID",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -746,7 +746,16 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "User Delete"
+                        "description": "User deleted"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
                     }
                 },
                 "security": [
