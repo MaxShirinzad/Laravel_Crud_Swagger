@@ -87,23 +87,25 @@ class UserController extends Controller
     }
 
     /**
-     * @OA\Get(path="/users/{id}",
-     *   security={{"bearerAuth":{}}},
-     *   tags={"Users"},
-     *   description="Show user info by id",
-     *   @OA\Response(response="200",
-     *     description="User",
-     *   ),
-     *   @OA\Parameter(
-     *     name="id",
-     *     description="User ID",
-     *     in="path",
-     *     required=true,
-     *     example="1",
-     *     @OA\Schema(
-     *        type="integer"
-     *     )
-     *   )
+     * @OA\Get(
+     *     path="/users/{id}",
+     *     summary="Get user details",
+     *     tags={"Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         example="1",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *     ),
+     *     @OA\Response(response=404, description="User not found"),
+     *     @OA\Response(response=401, description="Unauthenticated")
      * )
      */
     public function show(User $user): UserResource

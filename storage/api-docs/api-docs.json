@@ -634,13 +634,12 @@
                 "tags": [
                     "Users"
                 ],
-                "description": "Show user info by id",
+                "summary": "Get user details",
                 "operationId": "19cd128a17ff65ab67a543753e81e2fd",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "User ID",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -650,7 +649,20 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "User"
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
                     }
                 },
                 "security": [
