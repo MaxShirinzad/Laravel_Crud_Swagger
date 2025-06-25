@@ -45,18 +45,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    public int $id;
-    public string $name;
-    public string $phone;
-    public string $profile;
-    public int $type_id;
-    public string $email;
-    public string $image;
-    public bool $IsActivated;
-    public Carbon|null $created_at;
-    public Carbon|null $updated_at;
-    public Carbon|null $deleted_at;
-
     protected $fillable = [
         'name',
         'email',
