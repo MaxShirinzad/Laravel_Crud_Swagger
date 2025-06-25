@@ -116,26 +116,30 @@ class UserController extends Controller
 
     /**
      * @OA\Put(
-     *   path="/users/{id}",
-     *   security={{"bearerAuth":{}}},
-     *   tags={"Users"},
-     *   @OA\Response(response="202",
-     *     description="User Update",
-     *   ),
-     *   @OA\Parameter(
-     *     name="id",
-     *     description="User ID",
-     *     in="path",
-     *     required=true,
-     *     example="21",
-     *     @OA\Schema(
-     *        type="integer"
-     *     )
-     *   ),
-     *   @OA\RequestBody(
-     *     required=true,
-     *     @OA\JsonContent(ref="#/components/schemas/UpdateUserRequest")
-     *   )
+     *     path="/users/{id}",
+     *     summary="Update user",
+     *     tags={"Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         example="5",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateUserRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User updated",
+     *         @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *     ),
+     *     @OA\Response(response=422, description="Validation error"),
+     *     @OA\Response(response=404, description="User not found"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=401, description="Unauthenticated")
      * )
      */
     public function update(UpdateUserRequest $request, User $user): UserResource
@@ -149,7 +153,7 @@ class UserController extends Controller
         if (isset($data['image'])) {
             $imageName = $this->saveImage($data['image'], $this->imagePath);
             $data['image'] = $imageName;
-
+            //----------------------------
             $this->deletePhotoOldPhoto($user->image, $this->imagePath);
         }
         //----------------------------

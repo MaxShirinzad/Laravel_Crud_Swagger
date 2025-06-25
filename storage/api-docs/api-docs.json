@@ -675,17 +675,17 @@
                 "tags": [
                     "Users"
                 ],
+                "summary": "Update user",
                 "operationId": "7d9c6b3e5a171b3895d81918c857982d",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "User ID",
                         "required": true,
                         "schema": {
                             "type": "integer"
                         },
-                        "example": "21"
+                        "example": "5"
                     }
                 ],
                 "requestBody": {
@@ -699,8 +699,27 @@
                     }
                 },
                 "responses": {
-                    "202": {
-                        "description": "User Update"
+                    "200": {
+                        "description": "User updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
                     }
                 },
                 "security": [
@@ -847,23 +866,20 @@
                 "type": "object"
             },
             "UpdateUserRequest": {
-                "title": "Update User request",
-                "description": "Update User request body data",
                 "properties": {
                     "name": {
-                        "title": "name",
                         "type": "string",
-                        "example": "Test"
+                        "example": "userOne"
                     },
                     "email": {
-                        "title": "email",
                         "type": "string",
-                        "example": "test23@test.com"
+                        "format": "email",
+                        "example": "user1@example.com"
                     },
                     "password": {
-                        "title": "password",
                         "type": "string",
-                        "example": "123123"
+                        "format": "password",
+                        "example": "aa123123"
                     }
                 },
                 "type": "object"

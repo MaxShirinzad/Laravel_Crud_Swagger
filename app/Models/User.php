@@ -2,11 +2,32 @@
 
 namespace App\Models;
 
+use App\Enums\UserType;
+use Database\Factories\ProductFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
+
+
+/**
+ * App\Models\User
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $phone
+ * @property string $profile
+ * @property int $type_id
+ * @property string $email
+ * @property string $image
+ * @property boolean $IsActivated
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ */
 
 /**
  * @OA\Schema(
@@ -24,11 +45,18 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    public int $id;
+    public string $name;
+    public string $phone;
+    public string $profile;
+    public int $type_id;
+    public string $email;
+    public string $image;
+    public bool $IsActivated;
+    public Carbon|null $created_at;
+    public Carbon|null $updated_at;
+    public Carbon|null $deleted_at;
+
     protected $fillable = [
         'name',
         'email',
@@ -36,27 +64,25 @@ class User extends Authenticatable
         'image',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return in_array($this->type_id, [
+            UserType::SUPERADMIN->value,
+            UserType::ADMIN->value
+        ]);
     }
 
     public function imagePublicLink(): ?string
