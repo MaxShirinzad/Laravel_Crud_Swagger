@@ -9,12 +9,9 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Traits\ToolsTraits;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Response;
 
 /**
  * @OA\Tag(

@@ -12,23 +12,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 
-
-/**
- * App\Models\User
- *
- * @property int $id
- * @property string $name
- * @property string $phone
- * @property string $profile
- * @property int $type_id
- * @property string $email
- * @property string $image
- * @property boolean $IsActivated
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
- */
-
 /**
  * @OA\Schema(
  *     schema="User",
@@ -40,6 +23,18 @@ use Laravel\Sanctum\HasApiTokens;
  *     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-03-11 20:40:54"),
  *     @OA\Property(property="image", type="string", example="/users/images/user1.jpg")
  * )
+ *
+ * App\Models\User
+ * @property int $id
+ * @property string $name
+ * @property string|null $phone
+ * @property int $type_id
+ * @property string|null $email
+ * @property string|null $image
+ * @property boolean $IsActivated
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  */
 class User extends Authenticatable
 {
@@ -47,6 +42,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'phone',
         'email',
         'password',
         'image',
