@@ -685,7 +685,7 @@
                         "schema": {
                             "type": "integer"
                         },
-                        "example": "5"
+                        "example": "4"
                     }
                 ],
                 "requestBody": {
@@ -879,11 +879,6 @@
                     "name": {
                         "type": "string",
                         "example": "userOne"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "user1@example.com"
                     },
                     "password": {
                         "type": "string",

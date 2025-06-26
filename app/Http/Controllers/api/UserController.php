@@ -125,7 +125,7 @@ class UserController extends Controller
      *         name="id",
      *         in="path",
      *         required=true,
-     *         example="5",
+     *         example="4",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
