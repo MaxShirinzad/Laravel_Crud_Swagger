@@ -14,7 +14,6 @@ use App\Models\User;
 use Tests\TestCase;
 
 uses(TestCase::class);
-
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
@@ -22,7 +21,7 @@ beforeEach(function () {
     //Cache::flush();
 });
 
-test('user can register with valid data', function () {
+test('User can register with valid data', function () {
     $response = $this->postJson('/api/signup', [
         'name' => 'Test User',
         'email' => 'test@example.com',
@@ -38,11 +37,23 @@ test('user can register with valid data', function () {
 
 });
 
+test('Registration fails with invalid data', function () {
+    $response = $this->postJson('/api/signup', [
+        'name' => '',
+        'email' => 'not-an-email',
+        'password' => 'short',
+        'password_confirmation' => 'mismatch',
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['name', 'email', 'password']);
+});
+
 
 //test('user can register with image', function () {
 //    $file = UploadedFile::fake()->image('avatar.jpg');
 //
-//    $response = $this->post('/api/users', [
+//    $response = $this->post('/api/signup', [
 //        'name' => 'Test User',
 //        'email' => 'test@example.com',
 //        'password' => 'Password123!',
@@ -51,18 +62,8 @@ test('user can register with valid data', function () {
 //    ]);
 //
 //    $response->assertStatus(201);
-//    $this->assertNotNull($response->json('data.image_url'));
+//    $this->assertNotNull($response->json('data.image'));
 //    Storage::disk('public')->assertExists('users/' . $file->hashName());
 //});
-//
-//test('registration fails with invalid data', function () {
-//    $response = $this->postJson('/api/users', [
-//        'name' => '',
-//        'email' => 'not-an-email',
-//        'password' => 'short',
-//        'password_confirmation' => 'mismatch',
-//    ]);
-//
-//    $response->assertStatus(422)
-//        ->assertJsonValidationErrors(['name', 'email', 'password']);
-//});
+
+
