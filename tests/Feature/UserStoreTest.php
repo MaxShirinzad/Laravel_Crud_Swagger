@@ -6,17 +6,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
-
 use Illuminate\Support\Facades\Cache;
-use Laravel\Sanctum\Sanctum;
-use function Pest\Laravel\postJson;
 
 use App\Models\User;
 
 use Tests\TestCase;
 
 uses(TestCase::class);
-//uses(RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     Artisan::call('migrate:fresh --seed');
@@ -61,27 +58,6 @@ test('Registration fails with invalid data', function () {
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['name', 'email', 'password']);
 });
-
-//test('allows a user to login and access protected route', function () {
-//    $response = $this->postJson('/api/login', [
-//        "email" => 'user@site.com',
-//        "password" => '1234567890'
-//    ]);
-//
-//    //dd($response->json()['user']['email']);
-//
-//    $response->assertStatus(200);
-//    $token = $response->json('token');
-//
-////    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-////        ->getJson('/api/user')
-////        ->assertJsonPath('user.email', 'user@site.com');
-//
-//    $this->withHeader('Authorization', 'Bearer ' . $token)
-//        ->getJson('/api/user')
-//        //->assertOk()
-//        ->assertJson(['email' => 'user@site.com']);
-//});
 
 //it('authenticates a user and creates another user', function () {
 //    // Step 1: Create the first user and log in
